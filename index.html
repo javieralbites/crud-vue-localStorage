@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Listado</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container mt-5" id="app">
+      <h1>{{titulo}}</h1>
+
+      <input
+        class="form-control my-3"
+        type="text"
+        placeholder="Agregar Tarea"
+        v-model="nuevaTarea"
+        @keyup.enter="addTarea"
+      />
+      <button @click="addTarea" class="mt-1 mb-4 btn btn-info">add util</button>
+
+      <ul class="list-group">
+        <li  :class="['list-group-item', tarea.estado ? 'list-group-item-success' : 'list-group-item-danger']" v-for="(tarea, index) in tareas">
+          <div class="d-flex justify-content-between align-items-center">
+              <div>{{index+1}} {{tarea.nombre}} - {{ tarea.estado}}</div>
+              <div>
+                  <button class="btn btn-success" @click="editarTarea(index)">OK</button>
+                  <button class="btn btn-danger" @click="eliminarTarea(index)">X</button>
+              </div>
+          </div>
+            
+        </li>
+      </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+    <script>
+      var app = new Vue({
+        el: "#app",
+        data: {
+          titulo: "CRUD locastorage",
+          tareas: [],
+          nuevaTarea: ""
+        },
+        methods: {
+          addTarea: function() {
+            this.tareas.push({ nombre: this.nuevaTarea, estado: false });
+            this.nuevaTarea = "";
+            localStorage.setItem('tarea-vue', JSON.stringify(this.tareas));
+          },
+          editarTarea: function (index) {
+              this.tareas[index].estado = !this.tareas[index].estado;
+              localStorage.setItem('tarea-vue', JSON.stringify(this.tareas));
+          },
+          eliminarTarea: function (index) {
+              this.tareas.splice(index, 1);
+              localStorage.setItem('tarea-vue', JSON.stringify(this.tareas));
+          }
+        },
+        created: function() {
+            let datosDB = JSON.parse(localStorage.getItem('tarea-vue'))
+            if (datosDB ===  null) {
+                this.tareas = []
+            } else {
+                this.tareas = datosDB
+            }
+        },
+      });
+    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
